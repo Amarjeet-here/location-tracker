@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Get Location Address</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+      }
+      #container {
+        width: 80%;
+        margin: auto;
+        text-align: center;
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 0 5px 1px rgba(0,0,0,0.1);
+        border-radius: 5px;
+        margin-top: 50px;
+      }
+      h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+      }
+      p {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+      }
+      button {
+        font-size: 1.2em;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #3e8e41;
+      }
+      header {
+        background-color: #ffffff;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+      #location {
+        font-size: 1.2em;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+        <img src="logo.jfif" alt="Image Description">
+      </header>
+    <div id="container">
+      <h1>Get Location Address</h1>
+      <p>Click the button below to get your location address:</p>
+      <button onclick="getLocation()">Get Location Address</button>
+      <div id="location"></div>
+    </div>
+    <script>
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+          alert('Geolocation is not supported by this browser.');
+        }
+      }
+
+      function showPosition(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            const address = data.display_name;
+            document.getElementById('location').innerHTML = `Your location address is: ${address}`;
+          })
+          .catch(error => console.error(error));
+      }
+
+      function showError(error) {
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            alert('User denied the request for Geolocation.');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert('Location information is unavailable.');
+            break;
+          case error.TIMEOUT:
+            alert('The request to get user location timed out.');
+            break;
+          case error.UNKNOWN_ERROR:
+            alert('An unknown error occurred.');
+            break;
+        }
+      }
+    </script>
+  </body>
+</html>
